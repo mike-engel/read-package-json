@@ -124,11 +124,15 @@ function scriptpath (file, data, cb) {
 function scriptpath_ (key) {
   var s = this[key]
   // This is never allowed, and only causes problems
-  if (typeof s !== 'string') return delete this[key]
+  if (!(/string|object/.test(typeof s)) && !Array.isArray(s)) return delete this[key]
 
   var spre = /^(\.[\/\\])?node_modules[\/\\].bin[\\\/]/
-  if (s.match(spre)) {
+  if (typeof s === 'string' && s.match(spre)) {
     this[key] = this[key].replace(spre, '')
+  }
+
+  if (s.script && typeof s.script === 'string' && s.script.match(spre)) {
+    this[key].script = this[key].script.replace(spre, '')
   }
 }
 
